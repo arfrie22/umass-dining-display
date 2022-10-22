@@ -1,0 +1,11 @@
+{
+    "files.associations": {
+        "*.tcc": "cpp",
+        "string": "cpp",
+        "istream": "cpp",
+        "arduino.h": "c",
+        "string_view": "cpp",
+        "regex": "cpp",
+        "typeinfo": "cpp"
+    }
+}
