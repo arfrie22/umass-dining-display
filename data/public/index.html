@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en" class="height-full">
+
+<head>
+  <meta charset="UTF-8" />
+  <title>Dining Display Config Page</title>
+  <link rel="stylesheet" href="css/style.css" />
+  <link rel="stylesheet" href="css/primer.css" />
+</head>
+
+<body data-color-mode="light" data-light-theme="light" data-dark-theme="dark" class="height-full mx-3">
+  <div class="d-flex flex-column flex-md-row flex-items-center flex-md-items-start height-full">
+    <div class="col-2 d-flex flex-items-center flex-items-center flex-md-items-start flex-1">
+      <nav class="SideNav border flex-1 mt-3">
+        <a class="SideNav-item" id="menu-main" href="#" aria-current="page">Main Menu</a>
+        <a class="SideNav-item" id="menu-update-wifi" href="#">Update Internet Connection Settings</a>
+        <a class="SideNav-item" id="menu-update-softap" href="#">Update Debug WiFi AP Settings</a>
+      </nav>
+    </div>
+    <div
+      class="col-12 col-md-10 d-flex flex-column flex-justify-center flex-items-center flex-md-items-start pl-md-4 height-full">
+      <iframe id="frame" src="./main.html" class="mt-3 height-full width-full" frameborder="0"></iframe>
+    </div>
+  </div>
+  <script>
+    function updateFrame(url) {
+      document.getElementById("frame").src = url;
+    }
+
+
+    document
+      .getElementById("menu-main")
+      .addEventListener("click", function () {
+        setActive("menu-main");
+        updateFrame("./main.html");
+      });
+
+    document
+      .getElementById("menu-update-wifi")
+      .addEventListener("click", function () {
+        setActive("menu-update-wifi");
+        updateFrame("./update-wifi.html");
+      });
+
+    document
+      .getElementById("menu-update-softap")
+      .addEventListener("click", function () {
+        setActive("menu-update-softap");
+        updateFrame("./update-softap.html");
+      });
+
+    function setActive(id) {
+      document
+        .getElementById("menu-main")
+        .removeAttribute("aria-current");
+      document
+        .getElementById("menu-update-wifi")
+        .removeAttribute("aria-current");
+      document
+        .getElementById("menu-update-softap")
+        .removeAttribute("aria-current");
+      document.getElementById(id).setAttribute("aria-current", "page");;
+    }
+  </script>
+  <script src="js/theme.js"></script>
+</body>
+
+</html>

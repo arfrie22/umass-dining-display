@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Main Page</title>
+    <link rel="stylesheet" href="css/primer.css" />
+</head>
+
+<body data-color-mode="light" data-light-theme="light" data-dark-theme="dark">
+
+
+    <h1>
+        Dining Display
+    </h1>
+
+    <div class="border d-flex flex-column">
+        <!-- <div class="p-4 border color-bg-subtle">Version: <span class="Label">%VERSION%</span></div> -->
+        <div class="p-4 border color-bg-subtle">Git Commit: <span class="Label">%GIT_COMMIT%</span></div>
+        <!-- <div class="p-4 border color-bg-subtle">Git Commit: <span class="Label">%GIT_COMMIT%</span></div> -->
+    </div>
+    <button class="float-right my-3 btn btn-danger btn-block" id="restart-button" type="button">Restart</button>
+
+    <script src="js/theme.js"></script>
+    <script>
+        function restart() {
+            document.getElementById("restart-button").disabled = true;
+            fetch("/restart", {
+                method: "POST"
+            }).then(function (response) {
+                console.log(response);
+                if (response.status == 200) {
+                    document.getElementById("restart-button").innerHTML = "Restarting<span class=\"AnimatedEllipsis\">";
+                } else {
+                    document.getElementById("restart-button").disabled = false;
+                    document.getElementById("restart-button").innerHTML = "Restart";
+                }
+            });
+        }
+    document.getElementById("restart-button").addEventListener("click", restart);
+
+    </script>
+</body>
+
+</html>

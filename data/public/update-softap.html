@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Update WiFi Settings</title>
+    <link rel="stylesheet" href="css/primer.css" />
+</head>
+
+<body data-color-mode="light" data-light-theme="light" data-dark-theme="dark">
+    <script>
+        const regex_ssid = /^[ -~]{1,32}$/;
+        const regex_psk = /^[ -~]{8,64}$/;
+
+        function validateForm() {
+            let ssid = document.forms["update-softap"]["ssid"].value;
+            let psk = document.forms["update-softap"]["psk"].value;
+
+            validateSSIDChange();
+            validatePSKChange();
+
+            if (ssid == "") {
+                flash("error", "SSID must be filled out");
+                return false;
+            }
+
+            if (!regex_ssid.test(ssid)) {
+                flash("error", "SSID must be between 1 and 32 characters");
+                return false;
+            }
+
+            if (psk == "") {
+                flash("error", "PSK must be filled out");
+                return false;
+            }
+
+            if (!regex_psk.test(psk)) {
+                flash("error", "PSK must be between 8 and 64 characters");
+                return false;
+            }
+
+            return true;
+        }
+
+        function validateSSIDInput() {
+            let ssid = document.forms["update-softap"]["ssid"].value;
+
+            if (ssid.length == 0) {
+                clearValidation("ssid");
+                return;
+            }
+
+            if (ssid.length > 32) {
+                errorValidation("ssid", "SSID can be at most 32 characters");
+                return;
+            }
+
+            clearValidation("ssid");
+        }
+
+        function validateSSIDChange() {
+            let ssid = document.forms["update-softap"]["ssid"].value;
+
+            if (ssid.length == 0) {
+                errorValidation("ssid", "SSID must be filled out");
+                return;
+            }
+
+            if (ssid.length > 32) {
+                errorValidation("ssid", "SSID can be at most 32 characters");
+                return;
+            }
+
+            clearValidation("ssid");
+        }
+
+        function validatePSKInput() {
+            let psk = document.forms["update-softap"]["psk"].value;
+
+            if (psk.length == 0) {
+                clearValidation("psk");
+                return;
+            }
+
+            if (psk.length > 64) {
+                errorValidation("psk", "PSK can be at most 64 characters");
+                return;
+            }
+
+            if (psk.length < 8) {
+                errorValidation("psk", "PSK must be longer than 8 characters");
+                return;
+            }
+
+            clearValidation("psk");
+        }
+
+        function validatePSKChange() {
+            let psk = document.forms["update-softap"]["psk"].value;
+
+            if (psk.length == 0) {
+                errorValidation("psk", "PSK must be filled out");
+                return;
+            }
+
+            if (psk.length > 64) {
+                errorValidation("psk", "PSK can be at most 64 characters");
+                return;
+            }
+
+            if (psk.length < 8) {
+                errorValidation("psk", "PSK must be longer than 8 characters");
+                return;
+            }
+
+            clearValidation("psk");
+        }
+
+        function submitFormFetch() {
+            if (validateForm()) {
+                const data = new URLSearchParams();
+                for (const pair of new FormData(document.forms[0])) {
+                    data.append(pair[0], pair[1]);
+                }
+
+                fetch("/update-softap", {
+                    method: "POST",
+                    body: data
+                }).then(response => {
+                    if (response.ok) {
+                        flash("success", "Successfully updated debug WiFi AP settings");
+                    } else {
+                        flash("error", "Failed to update debug WiFi AP settings");
+                    }
+                });
+            }
+        }
+    </script>
+
+    <form name="update-softap">
+        <p class="h2">
+            Update Debug WiFi AP Settings
+        </p>
+
+        <div id="ssid-group" class="form-group">
+            <div class="form-group-header">
+                <label for="ssid">SSID:</label>
+                <p class="text-small color-fg-subtle float-right">Current SSID: %AP_SSID%</p>
+            </div>
+            <div class="form-group-body">
+                <input class="form-control input-block" type="text" name="ssid" id="ssid" placeholder="%AP_SSID%"
+                    value="%AP_SSID%" aria-describedby="ssid-validation">
+            </div>
+            <p class="note d-none" id="ssid-validation"></p>
+        </div>
+
+        <div id="psk-group" class="form-group">
+            <div class="form-group-header">
+                <label for="psk">Password:</label>
+                <p class="text-small color-fg-subtle float-right">Current Password: %AP_PSK%</p>
+            </div>
+            <div class="form-group-body">
+                <input class="form-control input-block" type="text" name="psk" id="psk" placeholder="%AP_PSK%"
+                    value="%AP_PSK%" aria-describedby="psk-validation">
+            </div>
+            <p class="note d-none" id="psk-validation"></p>
+        </div>
+
+
+        <div class="form-actions">
+            <button id="submit" type="button" class="btn btn-primary">Submit</button>
+        </div>
+
+        <div id="flash" class="flash mt-3 d-none">
+            <flash-icon id="flash-icon"><svg class="octicon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16"
+                    width="16" height="16">
+                    <path
+                        d="M5.75 7.5a.75.75 0 01.75.75v1.5a.75.75 0 01-1.5 0v-1.5a.75.75 0 01.75-.75zm5.25.75a.75.75 0 00-1.5 0v1.5a.75.75 0 001.5 0v-1.5z">
+                    </path>
+                    <path fill-rule="evenodd"
+                        d="M6.25 0a.75.75 0 000 1.5H7.5v2H3.75A2.25 2.25 0 001.5 5.75V8H.75a.75.75 0 000 1.5h.75v2.75a2.25 2.25 0 002.25 2.25h8.5a2.25 2.25 0 002.25-2.25V9.5h.75a.75.75 0 000-1.5h-.75V5.75a2.25 2.25 0 00-2.25-2.25H9V.75A.75.75 0 008.25 0h-2zM3 5.75A.75.75 0 013.75 5h8.5a.75.75 0 01.75.75v6.5a.75.75 0 01-.75.75h-8.5a.75.75 0 01-.75-.75v-6.5z">
+                    </path>
+                </svg></flash-icon>
+            <flash-text id="flash-text"></flash-text>
+            <button class="flash-close" id="flash-close" type="button">
+                <svg class="octicon octicon-x" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="16"
+                    height="16">
+                    <path fill-rule="evenodd" clip-rule="evenodd"
+                        d="M3.72 3.72C3.86062 3.57955 4.05125 3.50066 4.25 3.50066C4.44875 3.50066 4.63937 3.57955 4.78 3.72L8 6.94L11.22 3.72C11.2887 3.64631 11.3715 3.58721 11.4635 3.54622C11.5555 3.50523 11.6548 3.48319 11.7555 3.48141C11.8562 3.47963 11.9562 3.49816 12.0496 3.53588C12.143 3.5736 12.2278 3.62974 12.299 3.70096C12.3703 3.77218 12.4264 3.85702 12.4641 3.9504C12.5018 4.04379 12.5204 4.14382 12.5186 4.24452C12.5168 4.34523 12.4948 4.44454 12.4538 4.53654C12.4128 4.62854 12.3537 4.71134 12.28 4.78L9.06 8L12.28 11.22C12.3537 11.2887 12.4128 11.3715 12.4538 11.4635C12.4948 11.5555 12.5168 11.6548 12.5186 11.7555C12.5204 11.8562 12.5018 11.9562 12.4641 12.0496C12.4264 12.143 12.3703 12.2278 12.299 12.299C12.2278 12.3703 12.143 12.4264 12.0496 12.4641C11.9562 12.5018 11.8562 12.5204 11.7555 12.5186C11.6548 12.5168 11.5555 12.4948 11.4635 12.4538C11.3715 12.4128 11.2887 12.3537 11.22 12.28L8 9.06L4.78 12.28C4.63782 12.4125 4.44977 12.4846 4.25547 12.4812C4.06117 12.4777 3.87579 12.399 3.73837 12.2616C3.60096 12.1242 3.52225 11.9388 3.51882 11.7445C3.51539 11.5502 3.58752 11.3622 3.72 11.22L6.94 8L3.72 4.78C3.57955 4.63938 3.50066 4.44875 3.50066 4.25C3.50066 4.05125 3.57955 3.86063 3.72 3.72Z">
+                    </path>
+                </svg>
+            </button>
+        </div>
+    </form>
+    <script src="js/theme.js"></script>
+    <script src="js/common.js"></script>
+    <script>
+        document.getElementById("ssid").addEventListener("input", validateSSIDInput);
+        document.getElementById("psk").addEventListener("input", validatePSKInput);
+
+        document.getElementById("ssid").addEventListener("change", validateSSIDChange);
+        document.getElementById("psk").addEventListener("change", validatePSKChange);
+
+        document.getElementById("ssid").addEventListener("focusout", validateSSIDChange);
+        document.getElementById("psk").addEventListener("focusout", validatePSKChange);
+
+        document.getElementById("submit").addEventListener("click", submitFormFetch);
+        document.getElementById("flash-close").addEventListener("click", hideFlash);
+    </script>
+</body>
+
+</html>
